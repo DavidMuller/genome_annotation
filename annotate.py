@@ -342,7 +342,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
         opened_file = open(xml_output)
         blast_record = NCBIXML.read(opened_file)
 
-        for_testing = contig_number == "Contig412"
+        #for_testing = contig_number == "Contig412"
 
         print "Now processing " + contig_number + "..."
     
@@ -356,7 +356,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
             significant = blastx_filter(description.e)
         
             # only continue analysis with proteins that pass our filter        
-            if significant and for_testing:
+            if significant: #and for_testing:
                 genomic_start, genomic_end = find_end_points(hsps)
                 protein_of_interest = description.title
                 protein_file_id = return_id_number_blast(protein_of_interest)
@@ -387,9 +387,9 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
                 augustus_arg = "augustus " + partitioned_contig + " --species=chlamydomonas --strand=both --hintsfile=" + exonerate_modified_file + " --outfile=" + augustus_out_file + " --extrinsicCfgFile=" + cfg_file
                 os.system(augustus_arg)
     
-        if out_type == 'g':        
+        if out_type == 'g' or True:        
             concatenate_augustus_for_contig(contig_number, augustus_out, final_output, genomic_start)
-        if out_type == 'a':
+        if out_type == 'a' or True:
             generate_multi_fasta_from_augustus(contig_number, augustus_out, final_output)
         print "Done with " + contig_number + "."
 
