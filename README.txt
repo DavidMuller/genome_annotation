@@ -7,18 +7,18 @@ Our annotation program is called annotate.py:
 All output will be saved in a folder called final_output, in the directory
 you run annotate.py in.
 
-Its -input, -p, -out, and -cfg options are required.
+Its -input, -p, and -out options are required.
 
---Input is fasta file with the DNA sequences you want to analyze.
---P is the protein data base (made with Blast+'s makeblastdb tool).
---Out specifies the format you want your results in--an argument of
+--input is fasta file with the DNA sequences you want to analyze.
+--p is the protein data base (made with Blast+'s makeblastdb tool).
+--out specifies the format you want your results in--an argument of
   'g' yields GFF output, a is a multi-fasta file of predicted protein
   sequences.
 
 
 Here is an example of a call to annotate.py: 
 
-python annotate.py  -input our_contigs.fasta -p Chlre4_best_proteins.fasta -cfg /home/david/augustus.2.7/config/extrinsic/extrinsic.MP.cfg -out g
+python annotate.py  -input our_contigs.fasta -p Chlre4_best_proteins.fasta -out g
 
 
 -------------------------------------------------------------------------------
