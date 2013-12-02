@@ -105,8 +105,8 @@ def return_length(input_fasta):
 # that Augustus will recognize.
 def change_feature_names(line):
     line = line.replace("cds","CDS")
-    line = line.replace("splice3","intron")
-    line = line.replace("splice5","intron")
+    line = line.replace("splice3","ass")
+    line = line.replace("splice5","dss")
     return line
 
 
@@ -384,7 +384,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
                 modify_gff_file(exonerate_output_file, exonerate_modified_file, 'M')
                 augustus_out_file = augustus_out + "/" + new_file_name + ".gff"
 
-                augustus_arg = "augustus " + partitioned_contig + " --species=chlamydomonas --strand=both --hintsfile=" + exonerate_modified_file + " --outfile=" + augustus_out_file + " --extrinsicCfgFile=" + cfg_file
+                augustus_arg = "augustus " + partitioned_contig + " --species=chlamydomonas --strand=both --hintsfile=" + exonerate_modified_file + " --outfile=" + augustus_out_file #+ " --extrinsicCfgFile=" + cfg_file
                 os.system(augustus_arg)
     
         if out_type == 'g' or True:        
@@ -406,8 +406,8 @@ parser = argparse.ArgumentParser(description='CSE 182: Genome annotation project
 parser.add_argument('-out', required=True, choices=['g', 'a'], help ='g for GFF output, a for a multi_fasta file of predicted protein, c for cDNA')
 parser.add_argument('-input', required=True, help='Fasta data base with all contigs')
 parser.add_argument('-p', required=True, help='Protein ortholog data base file')
-parser.add_argument('-cfg', required=True, help='Absolute path to the Augustus extrinsicCfgFile you want to use.  Ex: /home/david/augustus.2.7/config/extrinsic/extrinsic.MP.cfg')
 parser.add_argument('-m', required=False, help='Optional cDNA file')
+parser.add_argument('-cfg', required=False, help='Absolute path to the Augustus extrinsicCfgFile you want to use.  Ex: /home/david/augustus.2.7/config/extrinsic/extrinsic.MP.cfg')
 
 
 # parse command line arguments
