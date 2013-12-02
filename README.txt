@@ -9,10 +9,10 @@ you run annotate.py in.
 
 Its -input, -p, and -out options are required.
 
---input is fasta file with the DNA sequences you want to analyze.
---p is the protein data base (made with Blast+'s makeblastdb tool).
---out specifies the format you want your results in--an argument of
-  'g' yields GFF output, a is a multi-fasta file of predicted protein
+-input is fasta file with the DNA sequences you want to analyze.
+-p is the protein data base (made with Blast+'s makeblastdb tool).
+-out specifies the format you want your results in--an argument of
+  'g' yields GFF output, 'a' is a multi-fasta file of predicted protein
   sequences.
 
 
@@ -37,7 +37,7 @@ That partitioned contig and its corresponding protein are then passed to Exonera
 which generates a GFF file with hints about finer gene structure.  This raw exonerate
 GFF output is modified slightly to be compatible with Augustus.
 
-The modified GFF file is then past to Augustus to finish analysis.  
+The modified GFF file is then passed to Augustus to finish analysis.  
 
 Outputted in the folder 'final_output' are files for every contig in the input.
 The files are either a GFF file with all the predicted genes on that contig,
