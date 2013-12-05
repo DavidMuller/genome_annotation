@@ -181,17 +181,17 @@ def concatenate_augustus_for_contig(contig, augustus_output, final_output, origi
                         partitioned = line.split("\t")
                         if partitioned[1] == "AUGUSTUS":
                             # adjust coordinates
-                            print "\n\n\n"
-                            print "genomic start " + str(original_genomic_start)
-                            print "current 3 " + partitioned[3]
-                            print "current 4 " + partitioned[4]
-                            print "readjusted " + str(original_coordinates(int(partitioned[3]), original_genomic_start))
+                            #print "\n\n\n"
+                            #print "genomic start " + str(original_genomic_start)
+                            #print "current 3 " + partitioned[3]
+                            #print "current 4 " + partitioned[4]
+                            #print "readjusted " + str(original_coordinates(int(partitioned[3]), original_genomic_start))
                             partitioned[3] = str(original_coordinates(int(partitioned[3]), original_genomic_start))
                             partitioned[4] = str(original_coordinates(int(partitioned[4]), original_genomic_start))
-                            print "in partitioned[3] " + partitioned[3]
-                            print "in partitioned[4] " + partitioned[4]
+                            #print "in partitioned[3] " + partitioned[3]
+                            #print "in partitioned[4] " + partitioned[4]
                             line = "\t".join(partitioned)  
-                            print "to write to file " + line    
+                            #print "to write to file " + line    
                             outfile.write(line)
             
 
@@ -354,7 +354,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
         opened_file = open(xml_output)
         blast_record = NCBIXML.read(opened_file)
 
-        for_testing = contig_number == "Contig133"      
+        #for_testing = contig_number == "Contig133"      
 
         print "Now processing " + contig_number + "..."
     
@@ -370,7 +370,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
             protein_file_id = return_id_number_blast(protein_of_interest)
         
             # only continue analysis with proteins that pass our filter        
-            if significant and for_testing:# and protein_file_id == "132151":
+            if significant: #and for_testing:# and protein_file_id == "132151":
                 genomic_start, genomic_end = find_end_points(hsps)
                 protein_of_interest = description.title
                 protein_file_id = return_id_number_blast(protein_of_interest)
@@ -460,7 +460,7 @@ print "\nRunning blastx on each of our contigs:"
 print "Saving output in folder " + "'" + blastx_output + "'"
 
 # run blastx on all contigs
-#blastx_fasta_files(individual_contig_dir, args.p, blastx_output)
+blastx_fasta_files(individual_contig_dir, args.p, blastx_output)
 
 
 
