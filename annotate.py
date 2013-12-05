@@ -156,8 +156,9 @@ def modify_gff_file(to_modify, output, source_char):
 # and save in final output folder.
 # Parameters: the contig ("Contig412" for example), the output
 # folder with all the Augustus gff files, the folder to store
-# the final output, and the original genomic start coordinate.
-def concatenate_augustus_for_contig(contig, augustus_output, final_output, original_genomic_start):
+# the final output, and an original genomic start dict, 
+# where the keys are the file names (eg Contig412_1231534)
+def concatenate_augustus_for_contig(contig, augustus_output, final_output, original_genomic_start_dict):
     # make sure we have a directory for the final output    
     make_directory(final_output)
 
@@ -167,6 +168,7 @@ def concatenate_augustus_for_contig(contig, augustus_output, final_output, origi
     all_files = glob.glob(augustus_output + "/*")
     for output in all_files:
         file_name = return_only_name(output)
+        original_genomic_start = original_genomic_start_dict[file_name]
 
         # only look at output for this contig        
         if file_name.startswith(contig):
@@ -179,9 +181,17 @@ def concatenate_augustus_for_contig(contig, augustus_output, final_output, origi
                         partitioned = line.split("\t")
                         if partitioned[1] == "AUGUSTUS":
                             # adjust coordinates
+                            print "\n\n\n"
+                            print "genomic start " + str(original_genomic_start)
+                            print "current 3 " + partitioned[3]
+                            print "current 4 " + partitioned[4]
+                            print "readjusted " + str(original_coordinates(int(partitioned[3]), original_genomic_start))
                             partitioned[3] = str(original_coordinates(int(partitioned[3]), original_genomic_start))
                             partitioned[4] = str(original_coordinates(int(partitioned[4]), original_genomic_start))
-                            line = "\t".join(partitioned)      
+                            print "in partitioned[3] " + partitioned[3]
+                            print "in partitioned[4] " + partitioned[4]
+                            line = "\t".join(partitioned)  
+                            print "to write to file " + line    
                             outfile.write(line)
             
 
@@ -304,6 +314,7 @@ def find_end_points(hsps):
     end = []
     # each hsp_data is one hit for the protein
     for hsp_data in hsps:
+        print "start: " + str(hsp_data.query_start) + "\tend: " + str(hsp_data.query_end)
         begin.append(int(hsp_data.query_start))
         end.append(int(hsp_data.query_end))
     lowest_start = min(begin)
@@ -332,6 +343,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
     make_directory(augustus_out)
 
     genomic_start = 1
+    genomic_start_dict = {}
     
     # grab all blastx output files
     all_files = glob.glob(blastx_output_dir + "/*")
@@ -342,7 +354,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
         opened_file = open(xml_output)
         blast_record = NCBIXML.read(opened_file)
 
-        #for_testing = contig_number == "Contig412"
+        for_testing = contig_number == "Contig133"      
 
         print "Now processing " + contig_number + "..."
     
@@ -354,9 +366,11 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
             hsps = alignment.hsps
             protein_length = alignment.length
             significant = blastx_filter(description.e)
+            protein_of_interest = description.title
+            protein_file_id = return_id_number_blast(protein_of_interest)
         
             # only continue analysis with proteins that pass our filter        
-            if significant: #and for_testing:
+            if significant and for_testing:# and protein_file_id == "132151":
                 genomic_start, genomic_end = find_end_points(hsps)
                 protein_of_interest = description.title
                 protein_file_id = return_id_number_blast(protein_of_interest)
@@ -369,6 +383,8 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
 
                 # widen the blast hit boundaries
                 genomic_start, genomic_end = adjust_end_points(genomic_start, genomic_end, contig_length)
+                print genomic_start, genomic_end
+                genomic_start_dict[new_file_name] = genomic_start
 
                 # partition the contig according to the blast hit
                 partitioned_contig = smaller_genomic_regions + "/" + new_file_name + ".fasta" 
@@ -388,7 +404,7 @@ def exonerate_augustus(blastx_output_dir, smaller_genomic_regions, exonerate_out
                 os.system(augustus_arg)
     
         if out_type == 'g' or True:        
-            concatenate_augustus_for_contig(contig_number, augustus_out, final_output, genomic_start)
+            concatenate_augustus_for_contig(contig_number, augustus_out, final_output, genomic_start_dict)
         if out_type == 'a' or True:
             generate_multi_fasta_from_augustus(contig_number, augustus_out, final_output)
         print "Done with " + contig_number + "."
